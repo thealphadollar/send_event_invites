@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import csv
 import re
+import click
 
 EMAIL_REGEX = re.compile(r"\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
                          r"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z")
@@ -50,6 +51,59 @@ class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
     # variables to store event and attendees' email addresses
     event = {}
     attendees = []
+    discarded_addresses = []
+
+    def add_event_data(self, start_date, start_time, location, summary, end_date, end_time, description):
+        click.echo("adding details to the event...")
+        self.event = {
+            'summary': summary,
+            'location': location,
+            'start':
+                {
+                    'dateTime': str(start_date + "T" + start_time + ":00"),
+                    'timeZone': 'Asia/Kolkata'
+                }
+        }
+
+        if end_date is not None:
+            if end_time is not None:
+                self.event.update(
+                    {
+                        'end':
+                            {
+                                'dateTime': str(end_date + "T" + end_time + ":00"),
+                                'timeZone': 'Asia/Kolkata'
+                            }
+                    }
+                )
+            else:
+                self.event.update(
+                    {
+                        'end':
+                            {
+                                'dateTime': str(end_date + "T" + "00:00:00"),
+                                'timeZone': 'Asia/Kolkata'
+                            }
+                    }
+                )
+        else:
+            if end_time is not None:
+                self.event.update(
+                    {
+                        'end':
+                            {
+                                'dateTime': str(start_date + "T" + end_time + ":00"),
+                                'timeZone': 'Asia/Kolkata'
+                            }
+                    }
+                )
+
+        if description is not None:
+            self.event.update(
+                {
+                    'description': description
+                }
+            )
 
     def read_csv(self, file_path):
         """
@@ -63,35 +117,30 @@ class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
 
         with open(file_path) as csv_file:
 
-            print("reading CSV file...")
+            click.echo("reading {path} file...".format(path=file_path))
             csv_data = csv.reader(csv_file, delimiter=',')
 
-            print("detecting row and column for email address...")
+            click.echo("detecting row and column for email address...")
             skip_row_upto, email_index = find_email_index(csv_data)
-            print("emails found in column {column_no} after row {row_no}".format(column_no=email_index,
-                                                                                 row_no=skip_row_upto))
+            click.echo("emails found in column {column_no} after row {row_no}".format(column_no=email_index,
+                                                                                      row_no=skip_row_upto))
 
-            print("adding emails...")
-            discarded_addresses = []
+            click.echo("adding emails...")
             for row_index, row in enumerate(csv_data):
                 if row_index > skip_row_upto:
                     if EMAIL_REGEX.match(row[email_index]):
                         self.attendees.append({'email': row[email_index]})
                     else:
-                        discarded_addresses.append(row[email_index])
+                        self.discarded_addresses.append(row[email_index])
 
-            print("the following E-mail address were rejected due to regex match failure \n",
-                  "\n".join(discarded_addresses))
-
-    def create_event(self, event_data):
+    def create_event(self):
         """
         Collects necessary event data from user, inserts more required parameters and adds it to self event.
-        :param event_data: event data, provided in a dictionary format
         :return:
             None
         """
-        print("appending additional necessary data to the event...")
-        event_data.update(
+        click.echo("appending additional necessary data to the event...")
+        self.event.update(
             {
                 "attendees": self.attendees,
                 "reminders":
@@ -108,7 +157,6 @@ class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
                 "guestsCanSeeOtherGuests": True
             }
         )
-        self.event = event_data
 
     @abstractmethod
     def auth(self):
@@ -129,3 +177,12 @@ class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
         """
         # To be implemented in the derived class.
         pass
+
+    def display_discarded(self):
+        """
+        displays list of email addresses that did not match the REGEX
+        :return:
+        """
+        if len(self.discarded_addresses) > 0:
+            click.echo("the following E-mail addresses were rejected due to regex match failure \n",
+                       "\n".join(self.discarded_addresses))
