@@ -5,7 +5,11 @@ from oauth2client import file, client, tools
 import os
 import click
 
-home_dir = os.path.expanduser('~')
+HOME_DIR = os.path.expanduser('~')
+SCOPES = "https://www.googleapis.com/auth/calendar"
+CLIENT_ID_FILE = ".client_id.json"
+CREDENTIALS_FILE = os.path.join(HOME_DIR, ".cred_send_event_invite.json")
+APPLICATION_NAME = "Send Event Invite"
 
 
 class InsertEventGoogle(InsertEvent):
@@ -19,15 +23,16 @@ class InsertEventGoogle(InsertEvent):
             None
         """
         click.echo("google calendar authorisation initiated...")
-        scope = "https://www.googleapis.com/auth/calendar"
-        store = file.Storage(os.path.join(home_dir, '.credentials.json'))
+        store = file.Storage(CREDENTIALS_FILE)
         credentials = store.get()
 
         if not credentials or credentials.invalid:
-            flow = client.flow_from_clientsecrets('.client_id.json', scope)
-            credentials = tools.run_flow(flow, store)
+            flow = client.flow_from_clientsecrets(CLIENT_ID_FILE, SCOPES)
+            flow.user_agent = APPLICATION_NAME
+            credentials = tools.run_flow(flow, store, None)
         click.echo("authorisation successful!\nbuilding service...")
         self.service = build('calendar', 'v3', http=credentials.authorize(Http()))
+        click.echo("credentials stored to {address} for subsequent use".format(address=CREDENTIALS_FILE))
 
     def insert(self):
         """
