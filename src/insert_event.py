@@ -8,27 +8,6 @@ email_exp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:
 EMAIL_REGEX = re.compile(email_exp)
 
 
-def protect(*protected):
-    """
-    Returns a metaclass that protects all attributes given as strings
-    """
-
-    class Protect(type):
-
-        has_base = False
-
-        def __new__(meta, name, bases, attrs):
-            if meta.has_base:
-                for attribute in attrs:
-                    if attribute in protected:
-                        raise AttributeError('Overriding of attribute "%s" not allowed.' % attribute)
-            meta.has_base = True
-            klass = super().__new__(meta, name, bases, attrs)
-            return klass
-
-    return Protect
-
-
 def find_email_index(csv_data):
     """
     Returns the column index for a row at which email address is stored.
@@ -43,7 +22,7 @@ def find_email_index(csv_data):
                 return row_index, col_index
 
 
-class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
+class InsertEvent(ABC):
     """
     An abstract base class to manage all the functions required to be accomplished to add an event.
     A new calendar AP can be easily added by creating another derived class and overriding the abstract methods.
@@ -185,5 +164,5 @@ class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
         :return:
         """
         if len(self.discarded_addresses) > 0:
-            click.echo("the following E-mail addresses were rejected due to regex match failure \n",
-                       "\n".join(self.discarded_addresses))
+            click.echo("the following E-mail addresses were rejected due to regex match failure \n")
+            click.echo(self.discarded_addresses)
