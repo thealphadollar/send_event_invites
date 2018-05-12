@@ -95,15 +95,14 @@ class InsertEvent(ABC):
 
             click.echo("adding emails...")
             for row_index, row in enumerate(csv_data):
-                if row_index > skip_row_upto:
-                    if EMAIL_REGEX.match(str(row[email_index]).lower()):
-                        self.attendees.append({'email': row[email_index]})
-                    else:
-                        self.discarded_addresses.append(row[email_index])
+                if EMAIL_REGEX.match(str(row[email_index]).lower()):
+                    self.attendees.append({'email': row[email_index]})
+                else:
+                    self.discarded_addresses.append(row[email_index])
 
     def create_event(self):
         """
-        Collects necessary event data from user, inserts more required parameters and adds it to self event.
+        Inserts more required parameters to self.event_data
         :return:
             None
         """
@@ -122,7 +121,8 @@ class InsertEvent(ABC):
                         ]
                     },
                 "guestsCanInviteOthers": True,
-                "guestsCanSeeOtherGuests": True
+                "guestsCanSeeOtherGuests": True,
+                "sendNotifications": True
             }
         )
 
@@ -153,5 +153,5 @@ class InsertEvent(ABC):
             None
         """
         if len(self.discarded_addresses) > 0:
-            click.echo("the following E-mail addresses were rejected due to regex match failure \n")
+            click.echo("The following inputs were rejected due to not matching Email Address format,")
             click.echo(self.discarded_addresses)

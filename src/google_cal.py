@@ -30,9 +30,13 @@ class InsertEventGoogle(InsertEvent):
             flow = client.flow_from_clientsecrets(CLIENT_ID_FILE, SCOPES)
             flow.user_agent = APPLICATION_NAME
             credentials = tools.run_flow(flow, store, None)
-        click.echo("authorisation successful!\nbuilding service...")
+            click.echo("authorisation successful!\nstoring credentials in {address} for subsequent "
+                       "use...".format(address=CREDENTIALS_FILE))
+        else:
+            click.echo("importing credentials from {address}...".format(address=CREDENTIALS_FILE))
+
+        click.echo("building service...")
         self.service = build('calendar', 'v3', http=credentials.authorize(Http()))
-        click.echo("credentials stored to {address} for subsequent use".format(address=CREDENTIALS_FILE))
 
     def insert(self):
         """
@@ -41,8 +45,8 @@ class InsertEventGoogle(InsertEvent):
             None
         """
         click.echo("inserting event in owner's primary calendar...")
-        created_event = self.service.events().insert(calendarId='primary', body=self.event_data,
-                                                     sendNotifications=True).execute()
+        created_event = self.service.events().insert(sendNotifications=True, calendarId='primary',
+                                                     body=self.event_data).execute()
         click.echo("Voila! Event created:  {link}\n".format(
             link=created_event.get('htmlLink')
         ))
