@@ -162,6 +162,7 @@ class InsertEvent(ABC):
         """
         displays list of email addresses that did not match the REGEX
         :return:
+            None
         """
         if len(self.discarded_addresses) > 0:
             click.echo("the following E-mail addresses were rejected due to regex match failure \n")

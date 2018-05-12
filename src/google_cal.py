@@ -16,6 +16,7 @@ class InsertEventGoogle(InsertEvent):
         """
         Authorises the api using .client_id.json.
         :return:
+            None
         """
         click.echo("google calendar authorisation initiated...")
         scope = "https://www.googleapis.com/auth/calendar"
@@ -32,10 +33,11 @@ class InsertEventGoogle(InsertEvent):
         """
         Inserts the event in the google calendar.
         :return:
+            None
         """
         click.echo("inserting event in owner's primary calendar...")
-        created_event = self.service.event().insert(calendarId='primary', body=self.event_data,
-                                                    sendNotifications=True).execute()
+        created_event = self.service.events().insert(calendarId='primary', body=self.event_data,
+                                                     sendNotifications=True).execute()
         click.echo("Voila! Event created:  {link}\nHangouts link: {hang_link}".format(
             link=created_event.get('htmlLink'),
             hang_link=created_event.get('hangoutLink')

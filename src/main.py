@@ -10,7 +10,6 @@ def set_api(name):
     :param name:
             google: sets Google Calendar as API
     :return:
-        cal_api:
             an instance of the chosen API
     """
     if name == "google":
