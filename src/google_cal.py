@@ -43,7 +43,6 @@ class InsertEventGoogle(InsertEvent):
         click.echo("inserting event in owner's primary calendar...")
         created_event = self.service.events().insert(calendarId='primary', body=self.event_data,
                                                      sendNotifications=True).execute()
-        click.echo("Voila! Event created:  {link}\nHangouts link: {hang_link}".format(
-            link=created_event.get('htmlLink'),
-            hang_link=created_event.get('hangoutLink')
+        click.echo("Voila! Event created:  {link}\n".format(
+            link=created_event.get('htmlLink')
         ))

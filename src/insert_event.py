@@ -46,37 +46,25 @@ class InsertEvent(ABC):
         }
 
         if end_date is not None:
-            if end_time is not None:
-                self.event_data.update(
-                    {
-                        'end':
-                            {
-                                'dateTime': str(end_date + "T" + end_time + ":00"),
-                                'timeZone': 'Asia/Kolkata'
-                            }
-                    }
-                )
-            else:
-                self.event_data.update(
-                    {
-                        'end':
-                            {
-                                'dateTime': str(end_date + "T" + "00:00:00"),
-                                'timeZone': 'Asia/Kolkata'
-                            }
-                    }
-                )
+            self.event_data.update(
+                {
+                    'end':
+                        {
+                            'dateTime': str(end_date + "T" + "00:00:00"),
+                            'timeZone': 'Asia/Kolkata'
+                        }
+                }
+            )
         else:
-            if end_time is not None:
-                self.event_data.update(
-                    {
-                        'end':
-                            {
-                                'dateTime': str(start_date + "T" + end_time + ":00"),
-                                'timeZone': 'Asia/Kolkata'
-                            }
-                    }
-                )
+            self.event_data.update(
+                {
+                    'end':
+                        {
+                            'dateTime': str(start_date + "T" + end_time + ":00"),
+                            'timeZone': 'Asia/Kolkata'
+                        }
+                }
+            )
 
         if description is not None:
             self.event_data.update(
