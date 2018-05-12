@@ -34,7 +34,7 @@ class InsertEventGoogle(InsertEvent):
         :return:
         """
         click.echo("inserting event in owner's primary calendar...")
-        created_event = self.service.event().insert(calendarId='primary', body=self.event,
+        created_event = self.service.event().insert(calendarId='primary', body=self.event_data,
                                                     sendNotifications=True).execute()
         click.echo("Voila! Event created:  {link}\nHangouts link: {hang_link}".format(
             link=created_event.get('htmlLink'),

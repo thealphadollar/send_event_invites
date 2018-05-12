@@ -29,13 +29,13 @@ class InsertEvent(ABC):
     """
 
     # variables to store event and attendees' email addresses
-    event = {}
+    event_data = {}
     attendees = []
     discarded_addresses = []
 
     def add_event_data(self, start_date, start_time, location, summary, end_date, end_time, description):
         click.echo("adding details to the event...")
-        self.event = {
+        self.event_data = {
             'summary': summary,
             'location': location,
             'start':
@@ -47,7 +47,7 @@ class InsertEvent(ABC):
 
         if end_date is not None:
             if end_time is not None:
-                self.event.update(
+                self.event_data.update(
                     {
                         'end':
                             {
@@ -57,7 +57,7 @@ class InsertEvent(ABC):
                     }
                 )
             else:
-                self.event.update(
+                self.event_data.update(
                     {
                         'end':
                             {
@@ -68,7 +68,7 @@ class InsertEvent(ABC):
                 )
         else:
             if end_time is not None:
-                self.event.update(
+                self.event_data.update(
                     {
                         'end':
                             {
@@ -79,7 +79,7 @@ class InsertEvent(ABC):
                 )
 
         if description is not None:
-            self.event.update(
+            self.event_data.update(
                 {
                     'description': description
                 }
@@ -120,7 +120,7 @@ class InsertEvent(ABC):
             None
         """
         click.echo("appending additional necessary data to the event...")
-        self.event.update(
+        self.event_data.update(
             {
                 "attendees": self.attendees,
                 "reminders":
