@@ -3,8 +3,9 @@ import csv
 import re
 import click
 
-EMAIL_REGEX = re.compile(r"\A[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
-                         r"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\z")
+email_exp = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)" \
+            "+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+EMAIL_REGEX = re.compile(email_exp)
 
 
 def protect(*protected):
@@ -38,7 +39,7 @@ def find_email_index(csv_data):
     """
     for row_index, row in enumerate(csv_data):
         for col_index, label in enumerate(row):
-            if label == "Email address":
+            if str(label).lower() == "email address":
                 return row_index, col_index
 
 
@@ -128,7 +129,7 @@ class InsertEvent(ABC, metaclass=protect("read_csv", "create_event")):
             click.echo("adding emails...")
             for row_index, row in enumerate(csv_data):
                 if row_index > skip_row_upto:
-                    if EMAIL_REGEX.match(row[email_index]):
+                    if EMAIL_REGEX.match(str(row[email_index]).lower()):
                         self.attendees.append({'email': row[email_index]})
                     else:
                         self.discarded_addresses.append(row[email_index])

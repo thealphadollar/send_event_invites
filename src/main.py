@@ -1,6 +1,6 @@
 from google_cal import InsertEventGoogle
+from __init__ import __version__
 import click
-from . import __version__
 
 
 def set_api(name):
@@ -19,7 +19,8 @@ def set_api(name):
 
 @click.command()
 @click.version_option(version=__version__, prog_name="send_event_invite")
-@click.option('--api', default="google", type=click.Choice(['google']))
+@click.option('--api', default="google", type=click.Choice(['google']), help="API to use with the tool, \
+                                                                                    default is \"google\"")
 @click.option('--path', '-p', default="attendees.csv", type=click.Path(exists=True), help="path to the csv file \
                 containing email address of attendees, default is \"attendees.csv\" in current directory")
 @click.option('--start-date', prompt="start date [yyyy-mm-dd]", help="start date of the event, eg 2017-02-28 for\
