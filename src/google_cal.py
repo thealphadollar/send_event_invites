@@ -1,4 +1,4 @@
-from insert_event import InsertEvent
+from .insert_event import InsertEvent
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools

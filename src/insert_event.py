@@ -153,5 +153,5 @@ class InsertEvent(ABC):
             None
         """
         if len(self.discarded_addresses) > 0:
-            click.echo("The following inputs were rejected due to not matching Email Address format,")
+            click.echo("The following inputs were rejected due to wrong format,")
             click.echo(self.discarded_addresses)

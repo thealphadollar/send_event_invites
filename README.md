@@ -22,9 +22,9 @@ To export your Groups list into a .csv file:</br>
 - To use the client, clone the repository.</br>
 `git clone https://github.com/thealphadollar/send_event_invites`
 - `cd send_event_invites`
-- `pip install -r requirements.txt`
-- `python3 src/main.py` if "attendees.csv" in src directory</br>
-  `python3 src/main.py -p=[path_to_csv_file]` otherwise
+- `pip install pipenv && pipenv install`
+- `python3 -m src` if "attendees.csv" in src directory</br>
+  `python3 -m src -p=[path_to_csv_file]` otherwise
 
 ## Accepted arguments
 
