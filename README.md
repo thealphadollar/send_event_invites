@@ -28,7 +28,7 @@ To export your Groups list into a .csv file:</br>
 
 ## Accepted arguments
 
-```bash
+```text
 Usage: main.py [OPTIONS]
 
   MEET MORE, LEARN MORE
