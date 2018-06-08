@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from tzlocal import get_localzone
 import csv
 import re
 import click
@@ -33,6 +34,9 @@ class InsertEvent(ABC):
     attendees = []
     discarded_addresses = []
 
+    # detect system timezone
+    tz = get_localzone().zone
+
     def add_event_data(self, start_date, start_time, location, summary, end_date, end_time, description):
         click.echo("adding details to the event...")
         self.event_data = {
@@ -41,7 +45,7 @@ class InsertEvent(ABC):
             'start':
                 {
                     'dateTime': str(start_date + "T" + start_time + ":00"),
-                    'timeZone': 'Asia/Kolkata'
+                    'timeZone': tz
                 }
         }
 
@@ -51,7 +55,7 @@ class InsertEvent(ABC):
                     'end':
                         {
                             'dateTime': str(end_date + "T" + "00:00:00"),
-                            'timeZone': 'Asia/Kolkata'
+                            'timeZone': tz
                         }
                 }
             )
@@ -61,7 +65,7 @@ class InsertEvent(ABC):
                     'end':
                         {
                             'dateTime': str(start_date + "T" + end_time + ":00"),
-                            'timeZone': 'Asia/Kolkata'
+                            'timeZone': tz
                         }
                 }
             )
