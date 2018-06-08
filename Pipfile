@@ -15,6 +15,7 @@ google-api-python-client = "*"
 rsa = "*"
 six = "*"
 uritemplate = "*"
+tzlocal = "*"
 
 [requires]
 python_version = "3.5"
